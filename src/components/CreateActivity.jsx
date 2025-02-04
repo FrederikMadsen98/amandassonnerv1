@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Select, MenuItem, Container, Typography, Paper } from "@mui/material";
 import Sidebar from "../components/Sidebar";
+import { createActivityWithUsers } from "../firestore"; // Importer den nye funktion
 
 const CreateActivity = () => {
   const [name, setName] = useState("");
@@ -16,7 +15,14 @@ const CreateActivity = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, "activities"), { name, date, time, location, type });
+      await createActivityWithUsers({
+        name,
+        date,
+        time,
+        location,
+        type,
+      });
+
       alert("Aktivitet oprettet!");
       navigate("/dashboard");
     } catch (error) {
@@ -27,9 +33,11 @@ const CreateActivity = () => {
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
-      <Container maxWidth="md" style={{ marginLeft: "260px", padding: "20px" }}>
-        <Paper elevation={3} style={{ padding: "20px" }}>
-          <Typography variant="h4" gutterBottom>Opret ny aktivitet</Typography>
+      <Container maxWidth="md" style={{ marginLeft: "260px", padding: "20px", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+        <Paper elevation={3} style={{ padding: "20px", width: "400px" }}>
+          <Typography variant="h4" gutterBottom>
+            Opret ny aktivitet
+          </Typography>
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
             <TextField label="Navn" value={name} onChange={(e) => setName(e.target.value)} required fullWidth />
             <TextField type="date" value={date} onChange={(e) => setDate(e.target.value)} required fullWidth />
@@ -40,7 +48,9 @@ const CreateActivity = () => {
               <MenuItem value="Træning">Træning</MenuItem>
               <MenuItem value="Socialt arrangement">Socialt arrangement</MenuItem>
             </Select>
-            <Button type="submit" variant="contained" color="primary" fullWidth>Opret Aktivitet</Button>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Opret Aktivitet
+            </Button>
           </form>
         </Paper>
       </Container>

@@ -39,10 +39,10 @@ const Dashboard = ({ role }) => {
 
   return (
     <div style={{ display: "flex" }}>
-      <Sidebar /> {/* 📌 Sørg for, at Sidebar er med her */}
+      <Sidebar /> 
       <div style={{ flexGrow: 1, padding: "20px", marginLeft: "250px" }}> {/* Tilføjer margin, så sidebar ikke overlapper */}
         <h1 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-          Velkommen til Dashboard
+          AMANDAS SØNNER
         </h1>
 
         {loading ? (
@@ -54,7 +54,7 @@ const Dashboard = ({ role }) => {
                 <CardContent>
                   <Typography variant="h5">{activity.name}</Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {activity.date} - {activity.location}
+                    {activity.date} - {activity.time} - {activity.location}
                   </Typography>
                 </CardContent>
               </Card>

@@ -1,7 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoute = ({ role }) => {
-  return role ? <Outlet /> : <Navigate to="/login" />;
+  if (!role) return <p>Indlæser...</p>; // Vent til rollen er hentet
+
+  return role === "admin" || role === "spiller" ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

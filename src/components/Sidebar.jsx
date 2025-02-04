@@ -15,10 +15,19 @@ const Sidebar = () => {
 
     ];
 
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);  // Logger brugeren ud fra Firebase
+            navigate("/login");   // Sender brugeren tilbage til login-siden
+        } catch (error) {
+            console.error("Fejl ved log ud:", error);
+        }
+    };
+
     // 🔹 Sidebar styling (kun desktop)
     const drawerStyle = {
         backgroundColor: "#1E2A97", // Blå farve fra logo
-        color: "#fff", 
+        color: "#fff",
         height: "100vh",
         width: "240px",
         display: "flex",
@@ -31,7 +40,7 @@ const Sidebar = () => {
         <Drawer
             variant="permanent"
             sx={{
-                "& .MuiDrawer-paper": drawerStyle, 
+                "& .MuiDrawer-paper": drawerStyle,
             }}
             open
         >
@@ -48,8 +57,10 @@ const Sidebar = () => {
                         <ListItemText primary={item.text} />
                     </ListItem>
                 ))}
-                <ListItem button onClick={() => signOut(auth)}>
-                    <ListItemIcon sx={{ color: "#fff" }}><Logout /></ListItemIcon>
+                <ListItem button onClick={handleLogout}>
+                    <ListItemIcon>
+                        <Logout sx={{ color: "white" }} />
+                    </ListItemIcon>
                     <ListItemText primary="Log Ud" />
                 </ListItem>
             </List>

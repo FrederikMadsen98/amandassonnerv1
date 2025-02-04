@@ -28,27 +28,19 @@ const AuthForm = () => {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        // **Tjek om første bruger og gør denne til admin**
-        const usersRef = doc(db, "users", user.uid);
-        const snapshot = await getDoc(usersRef);
-        const isFirstUser = !(await getDoc(doc(db, "users", "admin-exists"))).exists();
-
-        await setDoc(usersRef, {
-          email: user.email,
-          role: isFirstUser ? "admin" : "spiller",
-        });
-
-        if (isFirstUser) {
-          await setDoc(doc(db, "users", "admin-exists"), { created: true });
-        }
+        await createUserWithEmailAndPassword(auth, email, password);
       }
-      navigate("/dashboard"); // **👈 Tving navigation efter oprettelse**
+    
+      // Hent brugerens rolle
+      const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+      const userRole = userDoc.exists() ? userDoc.data().role : null;
+    
+      if (userRole) {
+        navigate("/dashboard"); // Sørg for at både admin og spiller sendes videre
+      }
     } catch (err) {
       setError(err.message);
-    }
+    }    
   };
 
   return (
