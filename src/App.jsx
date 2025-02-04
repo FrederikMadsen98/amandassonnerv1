@@ -8,6 +8,8 @@ import AuthForm from "./components/AuthForm";
 import Dashboard from "./components/Dashboard";
 import ActivityDetails from "./pages/ActivityDetails";
 import CreateActivity from "./components/CreateActivity";
+import CalendarPage from "./pages/CalendarPage";
+import EditActivity from "./pages/EditActivity";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -41,7 +43,9 @@ function App() {
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <AuthForm />} />
         <Route element={<PrivateRoute role={role} />}>
           <Route path="/dashboard" element={<Dashboard role={role} />} />
-          <Route path="/activity/:id" element={<ActivityDetails />} />
+          <Route path="/activity/:id" element={<ActivityDetails role={role} />} />
+          <Route path="/calendar" element={<CalendarPage role={role} />} />
+          <Route path="/edit-activity/:id" element={<EditActivity />} />
           {role === "admin" && <Route path="/create-activity" element={<CreateActivity />} />}
         </Route>
       </Routes>

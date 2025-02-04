@@ -1,86 +1,78 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
+import { Container, Typography, Paper, Button } from "@mui/material";
+import Sidebar from "../components/Sidebar";
 
-const ActivityDetails = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [activity, setActivity] = useState(null);
-    const [editedData, setEditedData] = useState({ name: "", date: "", location: "", time: "", type: "" });
-    const [isEditing, setIsEditing] = useState(false);
+const ActivityDetails = ({ role }) => {
+  const { id } = useParams();
+  const [activity, setActivity] = useState(null);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchActivity = async () => {
-            const docRef = doc(db, "activities", id);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                setActivity(docSnap.data());
-                setEditedData(docSnap.data());
-            } else {
-                console.log("Ingen aktivitet fundet!");
-            }
-        };
-        fetchActivity();
-    }, [id]);
-
-    // ✏️ Opdater aktivitet
-    const handleUpdate = async () => {
+  useEffect(() => {
+    const fetchActivity = async () => {
+      try {
         const docRef = doc(db, "activities", id);
-        await updateDoc(docRef, editedData);
-        setActivity(editedData);
-        setIsEditing(false);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setActivity({ id: docSnap.id, ...docSnap.data() });
+        }
+      } catch (error) {
+        console.error("Fejl ved hentning af aktivitet:", error);
+      }
     };
 
-    // ❌ Slet aktivitet
-    const handleDelete = async () => {
+    fetchActivity();
+  }, [id]);
+
+  const handleDelete = async () => {
+    if (window.confirm("Er du sikker på, at du vil slette denne aktivitet?")) {
+      try {
         await deleteDoc(doc(db, "activities", id));
-        navigate("/dashboard"); // Tilbage til Dashboard efter sletning
-    };
+        navigate("/calendar");
+      } catch (error) {
+        console.error("Fejl ved sletning af aktivitet:", error);
+      }
+    }
+  };
 
-    if (!activity) return <p>Indlæser aktivitet...</p>;
+  if (!activity) return <p>Indlæser...</p>;
 
-    return (
-        <div>
-            <h2>Aktivitetsdetaljer</h2>
-            {isEditing ? (
-                <div>
-                    <input
-                        type="text"
-                        value={editedData.name}
-                        onChange={(e) => setEditedData({ ...editedData, name: e.target.value })}
-                    />
-                    <input
-                        type="date"
-                        value={editedData.date}
-                        onChange={(e) => setEditedData({ ...editedData, date: e.target.value })}
-                    />
-                    <input
-                        type="text"
-                        value={editedData.location}
-                        onChange={(e) => setEditedData({ ...editedData, location: e.target.value })}
-                    />
-                    <input
-                        type="time"
-                        value={editedData.time}
-                        onChange={(e) => setEditedData({ ...editedData, time: e.target.value })}
-                    />
-                    <button onClick={handleUpdate}>Gem</button>
-                    <button onClick={() => setIsEditing(false)}>Annuller</button>
-                </div>
-            ) : (
-                <div>
-                    <p><strong>Navn:</strong> {activity.name}</p>
-                    <p><strong>Dato:</strong> {activity.date}</p>
-                    <p><strong>Lokation:</strong> {activity.location}</p>
-                    <p><strong>Tid:</strong> {activity.time}</p>
-                    <button onClick={() => setIsEditing(true)}>Rediger</button>
-                    <button onClick={handleDelete}>Slet</button>
-                </div>
-            )}
-            <button onClick={() => navigate("/dashboard")}>Tilbage til Dashboard</button>
-        </div>
-    );
+  return (
+    <div style={{ display: "flex" }}>
+      <Sidebar />
+      <Container maxWidth="md" style={{ marginLeft: "260px", padding: "20px" }}>
+        <Paper elevation={3} style={{ padding: "20px" }}>
+          <Typography variant="h4" gutterBottom>{activity.name}</Typography>
+          <Typography variant="body1"><strong>Dato:</strong> {activity.date}</Typography>
+          <Typography variant="body1"><strong>Tid:</strong> {activity.time}</Typography>
+          <Typography variant="body1"><strong>Lokation:</strong> {activity.location}</Typography>
+          <Typography variant="body1"><strong>Type:</strong> {activity.type}</Typography>
+
+          {role === "admin" && (
+            <div style={{ marginTop: "20px" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate(`/edit-activity/${activity.id}`)}
+                style={{ marginRight: "10px" }}
+              >
+                Rediger
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleDelete}
+              >
+                Slet
+              </Button>
+            </div>
+          )}
+        </Paper>
+      </Container>
+    </div>
+  );
 };
 
 export default ActivityDetails;
