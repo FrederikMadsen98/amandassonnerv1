@@ -1,0 +1,64 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.loading-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.loading-ball {
+  width: 50px;
+  height: 50px;
+  animation: roll 2s linear infinite;
+}
+
+@keyframes roll {
+  0% { transform: translateX(0) rotate(0deg); }
+  100% { transform: translateX(100vw) rotate(360deg); }
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card-kamp {
+  border-left: 8px solid red;
+  background-color: #ffe5e5;
+}
+
+.card-træning {
+  border-left: 8px solid blue;
+  background-color: #e5e5ff;
+}
+
+.card-social {
+  border-left: 8px solid green;
+  background-color: #e5ffe5;
+}
+
+.read-the-docs {
+  color: #888;
+}
